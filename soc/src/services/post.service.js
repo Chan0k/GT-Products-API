@@ -1,4 +1,4 @@
-// src/services/post.service.js
+
 
 let posts = [
     { id: 1, title: 'First Post', content: 'This is the first post.' },

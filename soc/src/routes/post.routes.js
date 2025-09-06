@@ -1,4 +1,4 @@
-// src/routes/post.routes.js
+
 import { Router } from 'express';
 import * as postController from '../controllers/post.controller.js';
 
