@@ -29,6 +29,15 @@ export const updatePost = (id, postData) => {
     return posts[postIndex];
 };
 
+export const patchPost = (id, postData) => {
+    const postIndex = posts.findIndex(p => p.id === id);
+    if (postIndex === -1) {
+        return null;
+    }
+    posts[postIndex] = { ...postData};
+  return postsData;
+};
+
 export const deletePost = (id) => {
     const postIndex = posts.findIndex(p => p.id === id);
     if (postIndex === -1) {

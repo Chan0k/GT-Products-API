@@ -1,14 +1,26 @@
 // index.js
 import express from 'express';
+import dotenv from 'dotenv';
+import morgan from 'morgan'; // Import morgan
 import postRoutes from './src/routes/post.routes.js';
 
-const app = express();
-const port = 3000;
+// Load environment variables from .env file
+dotenv.config();
 
+const app = express();
+// Use the PORT from environment variables, with a fallback to 3000
+const port = process.env.PORT || 3000;
+
+// Middlewares
+app.use(morgan('dev')); // Use morgan for logging
 app.use(express.json());
 
 // Mount the post routes
 app.use('/posts', postRoutes);
+
+app.listen(port, () => {
+    console.log(`Server is running on http://localhost:${port}`);
+});
 
 app.get ('/posts', (req,res) =>{
     res.status(200).json(products);
@@ -16,6 +28,7 @@ app.get ('/posts', (req,res) =>{
 
 app.get ('/posts/:id', (req,res) => {
     const id = parseInt(req.params.id);
+    
     const searchProduct = products.find(product => product.id === id);
     console.log(searchProduct)
 
