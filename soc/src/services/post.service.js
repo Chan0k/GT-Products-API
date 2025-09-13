@@ -1,48 +1,54 @@
+// src/services/post.service.js
+import pool from '../config/db.js';
 
-
-let posts = [
-    { id: 1, title: 'First Post', content: 'This is the first post.' },
-    { id: 2, title: 'Second Post', content: 'This is the second post.' }
-];
-let nextId = 3;
-
-export const getAllPosts = () => {
-    return posts;
+export const getAllPosts = async () => {
+  const [rows] = await pool.query('SELECT * FROM posts ORDER BY id');
+  return rows;
 };
 
-export const getPostById = (id) => {
-    return posts.find(p => p.id === id);
+export const getPostById = async (id) => {
+  const [rows] = await pool.query('SELECT * FROM posts WHERE id = ?', [id]);
+  return rows[0] || null;
 };
 
-export const createPost = (postData) => {
-    const newPost = { id: nextId++, ...postData };
-    posts.push(newPost);
-    return newPost;
+export const createPost = async (postData) => {
+  const { title, content } = postData;
+  const [result] = await pool.query(
+    'INSERT INTO posts (title, content) VALUES (?, ?)',
+    [title, content]
+  );
+  return getPostById(result.insertId);
 };
 
-export const updatePost = (id, postData) => {
-    const postIndex = posts.findIndex(p => p.id === id);
-    if (postIndex === -1) {
-        return null;
-    }
-    posts[postIndex] = { ...posts[postIndex], ...postData };
-    return posts[postIndex];
+export const updatePost = async (id, postData) => {
+  const { title, content } = postData;
+  const [result] = await pool.query(
+    'UPDATE posts SET title = ?, content = ? WHERE id = ?',
+    [title, content, id]
+  );
+  if (result.affectedRows === 0) return null;
+  return getPostById(id);
 };
 
-export const patchPost = (id, postData) => {
-    const postIndex = posts.findIndex(p => p.id === id);
-    if (postIndex === -1) {
-        return null;
-    }
-    posts[postIndex] = { ...postData};
-  return postsData;
+export const partiallyUpdatePost = async (id, updates) => {
+  const allowed = ['title', 'content'];
+  const fields = Object.keys(updates).filter((f) => allowed.includes(f));
+  if (fields.length === 0) return getPostById(id);
+
+  const values = fields.map((f) => updates[f]);
+  const setClause = fields.map((f) => `${f} = ?`).join(', ');
+
+  const [result] = await pool.query(
+    `UPDATE posts SET ${setClause} WHERE id = ?`,
+    [...values, id]
+  );
+  if (result.affectedRows === 0) return null;
+  return getPostById(id);
 };
 
-export const deletePost = (id) => {
-    const postIndex = posts.findIndex(p => p.id === id);
-    if (postIndex === -1) {
-        return false;
-    }
-    posts.splice(postIndex, 1);
-    return true;
+export const deletePost = async (id) => {
+  const [result] = await pool.query('DELETE FROM posts WHERE id = ?', [id]);
+  return result.affectedRows > 0;
 };
+
+export const patchPost = partiallyUpdatePost;
