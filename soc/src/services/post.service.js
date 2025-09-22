@@ -16,13 +16,29 @@ export const getPostById = async (id) => {
 };
 
 export const createPost = async (postData) => {
-  const { title, content } = postData;
-  const [result] = await pool.query(
-    'INSERT INTO posts (title, content) VALUES (?, ?)',
-    [title, content]
-  );
-  return getPostById(result.insertId);
+  const { title, content, authorId } = postData;
+  try {
+    const [result] = await pool.query(
+      'INSERT INTO posts (title, content, authorId) VALUES (?, ?, ?)',
+      [title, content, authorId]
+    );
+    return await getPostById(result.insertId);
+  } catch (error) {
+    if (error && error.code === 'ER_NO_REFERENCED_ROW_2') {
+      throw new ApiError(400, 'Invalid author ID. User does not exist.');
+    }
+    throw error;
+  }
 };
+
+export const getPostsByAuthorId = async (userId) => {
+  const [rows] = await pool.query(
+    'SELECT * FROM posts WHERE authorId = ? ORDER BY id',
+    [userId]
+  );
+  return rows;
+};
+
 
 export const updatePost = async (id, postData) => {
   const { title, content } = postData;

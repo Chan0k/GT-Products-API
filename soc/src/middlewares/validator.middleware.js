@@ -9,6 +9,11 @@ export const validatePost = [
         .trim()
         .notEmpty()
         .withMessage('Content is Required.'),
+    body ('authorId')
+        .isInt({ min: 1 })
+        .trim()
+        .notEmpty()
+        .withMessage('A valid author ID is Required.'),
     (req,res,next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
