@@ -1,26 +1,29 @@
 import * as commentService from '../services/comment.service.js';
 
 export const getAllComments = (req, res) => {
-  res.json(commentService.getAllComments());
+    const comments = commentService.getAllComments();
+    res.json(comments);
 };
 
 export const getCommentsByPostId = (req, res) => {
-  const postId = Number(req.params.postId);
-  res.json(commentService.getCommentsByPostId(postId));
+    const postId = parseInt(req.params.postId, 10);
+    const comments = commentService.getCommentsByPostId(postId);
+    res.json(comments);
 };
 
-export const createComment = (req, res) => {
-  const postId = Number(req.params.postId);
-  const { text } = req.body;
+export const createCommentForPost = (req, res) => {
+    const postId = parseInt(req.params.postId, 10);
+    const { text } = req.body;
 
-  if (!text) {
-    return res.status(400).json({ message: "Text is required" });
-  }
+    if (!text) {
+        return res.status(400).json({ message: 'Comment text is required.' });
+    }
 
-  const comment = commentService.createComment(postId, text);
-  if (!comment) {
-    return res.status(404).json({ message: "Post not found" });
-  }
+    const newComment = commentService.createComment(postId, { text });
 
-  res.status(201).json(comment);
+    if (!newComment) {
+        return res.status(404).json({ message: 'Post not found.' });
+    }
+
+    res.status(201).json(newComment);
 };

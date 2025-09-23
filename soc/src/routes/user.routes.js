@@ -8,6 +8,6 @@ const router = Router();
 router.get('/', userController.getAllUsers);
 router.post('/', userController.createUser);
 router.get('/:id', userController.getUserById);
-router.get('/:userId/posts', getPostsByUser);
+router.get('/:userId/posts',userController.getPostsByUser);
 
 export default router;
