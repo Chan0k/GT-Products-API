@@ -17,8 +17,8 @@ app.use(morgan('dev'));
 app.use(express.json());
 
 app.use('/posts', postRoutes);
+app.use('/comments', commentRoutes);
 app.use('/users', userRoutes);
-app.use('/users', commentRoutes);
 
 app.use(errorHandler);
 

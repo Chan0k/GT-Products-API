@@ -1,4 +1,3 @@
-
 import { Router } from 'express';
 import { validatePost } from '../middlewares/validator.middleware.js';
 import * as postController from '../controllers/post.controller.js';
@@ -10,11 +9,10 @@ router.get('/', postController.getAllPosts);
 router.post('/', postController.createPost);
 router.get('/:id', postController.getPostById);
 router.put('/:id', postController.updatePost);
-router.patch('/:id', postController.partiallyUpdatePost);
 router.delete('/:id', postController.deletePost);
 router.patch('/:id', postController.patchPost);
 
-router.get('/:postId/comments', commentController.getCommentsByPostId);
-router.post('/:postId/comments', commentController.createCommentForPost);
+router.get('/:postId/comments', (req, res, next) => { console.log('HIT GET /posts/:postId/comments', req.params); next(); }, commentController.getCommentsByPostId);
+router.post('/:postId/comments', (req, res, next) => { console.log('HIT POST /posts/:postId/comments', req.params); next(); }, commentController.createComment);
 
 export default router;
