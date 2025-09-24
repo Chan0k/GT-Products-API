@@ -25,20 +25,18 @@ export const validatePost = [
 
 
 export const validateComment = [
-  body('comment')
+  body('text')
     .trim()
     .notEmpty()
     .withMessage('Comment text is required.'),
   body('authorId')
-     .isInt({ min: 1 })
-        .trim()
-        .notEmpty()
-        .withMessage('A valid author ID is Required.'),
-  (req, res, next) => {
-    const errors = validationResult(req);
- if (!errors.isEmpty()) {
+    .isInt({ min: 1 })
+    .withMessage('A valid author ID is required.'),
+    (req,res,next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
             return res.status(400).json({errors: errors.array()});
         }
         next();
-  },
+    },
 ];
