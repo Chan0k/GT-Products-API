@@ -34,23 +34,25 @@ export const createPost = asyncHandler(async (req, res) => {
 
 
 
-export const updatePost = async (req, res) => {
-  try {
-    const id = Number.parseInt(req.params.id, 10);
-    if (Number.isNaN(id)) {
-      return res.status(400).json({ message: 'Invalid id parameter' });
-    }
-    const { title, content } = req.body || {};
-    if (!title || !content) {
-      return res.status(400).json({ message: 'Title and content are required for update.' });
-    }
-    const updated = await postService.updatePost(id, { title, content });
-    if (!updated) return res.status(404).json({ message: 'Post not found.' });
-    res.json(updated);
-  } catch (error) {
-    res.status(500).json({ message: 'Error updating post', error: error.message });
-  }
-};
+// src/controllers/post.controller.js
+// ... (imports and other functions)
+
+export const updatePost = asyncHandler(async (req, res) => {
+    const postId = parseInt(req.params.id, 10);
+    const postData = req.body;
+    const userId = req.user.id; // Get the user ID from the middleware
+
+    const updatedPost = await postService.updatePost(postId, postData, userId);
+    res.status(200).json(new ApiResponse(200, updatedPost, "Post updated successfully"));
+});
+
+export const deletePost = asyncHandler(async (req, res) => {
+    const postId = parseInt(req.params.id, 10);
+    const userId = req.user.id; // Get the user ID from the middleware
+
+    await postService.deletePost(postId, userId);
+    res.status(200).json(new ApiResponse(200, null, "Post deleted successfully"));
+});
 
 export const partiallyUpdatePost = async (req, res) => {
   try {
@@ -80,19 +82,4 @@ export const partiallyUpdatePost = async (req, res) => {
   }
 };
 
-// Alias for compatibility if your routes still import patchPost
 export const patchPost = partiallyUpdatePost;
-
-export const deletePost = async (req, res) => {
-  try {
-    const id = Number.parseInt(req.params.id, 10);
-    if (Number.isNaN(id)) {
-      return res.status(400).json({ message: 'Invalid id parameter' });
-    }
-    const success = await postService.deletePost(id);
-    if (!success) return res.status(404).json({ message: 'Post not found.' });
-    res.status(204).send();
-  } catch (error) {
-    res.status(500).json({ message: 'Error deleting post', error: error.message });
-  }
-};
