@@ -24,16 +24,15 @@ export const getPostById = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, post, "Post retrieved successfully"));
 });
 
-export const createPost = async (req, res) => {
-   try {
-        const newPost = await postService.createPost(req.body);
-        return res
-            .status(201)
-            .json(new ApiResponse(201, newPost, "Post created successfully"));
-  } catch (error) {
-    res.status(500).json({ message: 'Error creating post', error: error.message });
-  }
-};
+export const createPost = asyncHandler(async (req, res) => {
+    const authorId = req.user.id;
+    const postData = req.body;
+
+    const newPost = await postService.createPost(postData, authorId); // Pass authorId separately
+    res.status(201).json(new ApiResponse(201, newPost, "Post created successfully"));
+});
+
+
 
 export const updatePost = async (req, res) => {
   try {

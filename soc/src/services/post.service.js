@@ -1,4 +1,3 @@
-// src/services/post.service.js
 import { ApiError } from '../utils/ApiError.js';
 import pool from '../config/db.js';
 
@@ -36,15 +35,16 @@ export const getPostById = async (id) => {
   return rows[0];
 };
 
-export const createPost = async (postData) => {
-  const { title, content, authorId } = postData;
-  try {
-    const [result] = await pool.query(
-      'INSERT INTO posts (title, content, authorId) VALUES (?, ?, ?)',
-      [title, content, authorId]
-    );
-    return await getPostById(result.insertId);
-  } catch (error) {
+export const createPost = async (postData, authorId) => {
+    const { title, content } = postData; 
+    try {
+        const [result] = await pool.query(
+            'INSERT INTO posts (title, content, authorId) VALUES (?, ?, ?)',
+            [title, content, authorId] 
+        );
+        const newPost = await getPostById(result.insertId);
+        return newPost;
+    } catch (error) {
     if (error && error.code === 'ER_NO_REFERENCED_ROW_2') {
       throw new ApiError(400, 'Invalid author ID. User does not exist.');
     }
