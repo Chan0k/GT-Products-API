@@ -4,7 +4,7 @@
 Christian Lescano
 
 First Screenshot
-![First Screenshot](screenshots/first-screenshot.png)
+![First Screenshot](screenshots/first-screenshot.jpg)
 Second Screenshot
 ![Second Screenshot](screenshots/second%20screenshot.png)
 Third Screenshot
